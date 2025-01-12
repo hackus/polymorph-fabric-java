@@ -14,9 +14,15 @@ this GitHub repository:
 [PDE and PDL Specifications](https://github.com/jjenkov/pde-pdl-specification)
 
 
-## Polymorph Data Encoding Writer
+## Polymorph Data Encoding Writer and Reader
 
 You can see an example of how to write raw, binary PDE in the PdeWriterTest, here:
 
 
-[PdeWriterTest]()
+[PdeWriterTest](https://github.com/jjenkov/polymorph-fabric-java/blob/main/src/test/java/com/plmph/pde/PdeWriterTest.java)
+
+
+You can see an example of how to read raw, binary PDE in the PdeReaderTest, here:
+
+[PdeReaderTest](https://github.com/jjenkov/polymorph-fabric-java/blob/main/src/test/java/com/plmph/pde/PdeReaderTest.java)
+
