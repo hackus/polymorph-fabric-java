@@ -217,6 +217,48 @@ public class PdeWriter {
         this.dest[this.offset++] = (byte) (0xFF & (millisecond >> 8) );    // higher byte of millisecond
     }
 
+    public void writeReference(int referenceOffset){
+        int length = PdeUtil.byteLengthOfInt32Value(referenceOffset);
+        dest[offset++] = (byte) (0xFF & ((PdeFieldTypes.REFERENCE_1_BYTES - 1) + length));
+
+        for(int i=0, n=length*8; i < n; i+=8){
+            dest[offset++] = (byte) (0xFF & (referenceOffset >> i));
+        }
+    }
+
+    public void writeReference(long referenceOffset){
+        int length = PdeUtil.byteLengthOfInt64Value(referenceOffset);
+        dest[offset++] = (byte) (0xFF & ((PdeFieldTypes.REFERENCE_1_BYTES - 1) + length));
+
+        for(int i=0, n=length*8; i < n; i+=8){
+            dest[offset++] = (byte) (0xFF & (referenceOffset >> i));
+        }
+    }
+
+
+    public void writeKey(byte[] bytes) {
+        if(bytes == null) {
+            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_NULL));
+            return;
+        }
+
+        int length = bytes.length;
+
+        if(length < 16){
+            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_0_BYTES + length));
+        } else {
+            int lengthLength = PdeUtil.byteLengthOfInt64Value(length);
+            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_15_BYTES + lengthLength));
+            for(int i=0, n=lengthLength*8; i < n; i+=8){
+                dest[offset++] = (byte) (0xFF & (length >> i));
+            }
+        }
+
+        System.arraycopy(bytes, 0, dest, offset, length);
+
+        this.offset += length;
+    }
+
 
     public void writeObjectBeginPush(int lengthLength){
         this.compositeFieldStack[++this.compositeFieldStackIndex] = this.offset;
@@ -270,27 +312,6 @@ public class PdeWriter {
 
     }
 
-    public void writeKey(byte[] bytes) {
-        if(bytes == null) {
-            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_NULL));
-            return;
-        }
 
-        int length = bytes.length;
-
-        if(length < 16){
-            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_0_BYTES + length));
-        } else {
-            int lengthLength = PdeUtil.byteLengthOfInt64Value(length);
-            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.KEY_15_BYTES + lengthLength));
-            for(int i=0, n=lengthLength*8; i < n; i+=8){
-                dest[offset++] = (byte) (0xFF & (length >> i));
-            }
-        }
-
-        System.arraycopy(bytes, 0, dest, offset, length);
-
-        this.offset += length;
-    }
 
 }

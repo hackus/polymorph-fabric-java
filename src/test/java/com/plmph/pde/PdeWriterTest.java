@@ -340,6 +340,81 @@ public class PdeWriterTest {
         assertEquals( (0xFF & (999 >> 8) ), 0xFF & dest[9]);
     }
 
+
+    @Test
+    public void testWriteReference() {
+        PdeWriter writer = new PdeWriter(new byte[1024]);
+
+        // Even though this referenceOffset is positive (123) - it is to be interpreted as a negative offset back in
+        // in the byte stream to a PDE field found at the location of the beginning of the Reference field minus the
+        // referenceOffset. In this case, the offset actually references outside of the byte buffer - so it would not
+        // make much sense in reality - but for the sake of this unit test, a backwards relative offset of 123 works.
+        writer.writeReference(123);
+        assertEquals(2, writer.offset);
+        assertEquals(PdeFieldTypes.REFERENCE_1_BYTES, writer.dest[0]);
+        assertEquals(123, writer.dest[1]);
+
+        writer.writeReference(65534);
+        assertEquals(5, writer.offset);
+        assertEquals(PdeFieldTypes.REFERENCE_2_BYTES, writer.dest[2]);
+        assertEquals(0xfe, 0xff & writer.dest[3]);
+        assertEquals(0xff, 0xff & writer.dest[4]);
+    }
+
+
+    @Test
+    public void testWriteKey() {
+        byte[] dest = new byte[65 * 1024];
+
+        PdeWriter writer = new PdeWriter(dest);
+
+        writer.writeKey(null);
+        assertEquals(1, writer.offset);
+        assertEquals(PdeFieldTypes.KEY_NULL, dest[0]);
+
+        writer.writeKey("0123456789".getBytes(StandardCharsets.UTF_8));
+        assertEquals(12, writer.offset);
+        assertEquals(PdeFieldTypes.KEY_10_BYTES, 0xFF & dest[1]);
+        assertEquals('0', (char) (0xFF & dest[2]));
+        assertEquals('1', (char) (0xFF & dest[3]));
+        assertEquals('2', (char) (0xFF & dest[4]));
+        assertEquals('3', (char) (0xFF & dest[5]));
+        assertEquals('4', (char) (0xFF & dest[6]));
+        assertEquals('5', (char) (0xFF & dest[7]));
+        assertEquals('6', (char) (0xFF & dest[8]));
+        assertEquals('7', (char) (0xFF & dest[9]));
+        assertEquals('8', (char) (0xFF & dest[10]));
+        assertEquals('9', (char) (0xFF & dest[11]));
+
+
+        writer.writeKey("01234567890123456789".getBytes(StandardCharsets.UTF_8));
+        assertEquals(34, writer.offset);
+        assertEquals(PdeFieldTypes.KEY_1_LENGTH_BYTES, 0xFF & dest[12]);
+        assertEquals(20, (0xFF & dest[13]));  // the length byte
+        assertEquals('0', (char) (0xFF & dest[14]));
+        assertEquals('1', (char) (0xFF & dest[15]));
+        assertEquals('2', (char) (0xFF & dest[16]));
+        assertEquals('3', (char) (0xFF & dest[17]));
+        assertEquals('4', (char) (0xFF & dest[18]));
+        assertEquals('5', (char) (0xFF & dest[19]));
+        assertEquals('6', (char) (0xFF & dest[20]));
+        assertEquals('7', (char) (0xFF & dest[21]));
+        assertEquals('8', (char) (0xFF & dest[22]));
+        assertEquals('9', (char) (0xFF & dest[23]));
+        assertEquals('0', (char) (0xFF & dest[24]));
+        assertEquals('1', (char) (0xFF & dest[25]));
+        assertEquals('2', (char) (0xFF & dest[26]));
+        assertEquals('3', (char) (0xFF & dest[27]));
+        assertEquals('4', (char) (0xFF & dest[28]));
+        assertEquals('5', (char) (0xFF & dest[29]));
+        assertEquals('6', (char) (0xFF & dest[30]));
+        assertEquals('7', (char) (0xFF & dest[31]));
+        assertEquals('8', (char) (0xFF & dest[32]));
+        assertEquals('9', (char) (0xFF & dest[33]));
+
+    }
+
+
     @Test
     public void testWriteObject() {
         byte[] dest = new byte[65 * 1024];
@@ -439,57 +514,7 @@ public class PdeWriterTest {
 
 
 
-    @Test
-    public void testWriteKey() {
-        byte[] dest = new byte[65 * 1024];
 
-        PdeWriter writer = new PdeWriter(dest);
-
-        writer.writeKey(null);
-        assertEquals(1, writer.offset);
-        assertEquals(PdeFieldTypes.KEY_NULL, dest[0]);
-
-        writer.writeKey("0123456789".getBytes(StandardCharsets.UTF_8));
-        assertEquals(12, writer.offset);
-        assertEquals(PdeFieldTypes.KEY_10_BYTES, 0xFF & dest[1]);
-        assertEquals('0', (char) (0xFF & dest[2]));
-        assertEquals('1', (char) (0xFF & dest[3]));
-        assertEquals('2', (char) (0xFF & dest[4]));
-        assertEquals('3', (char) (0xFF & dest[5]));
-        assertEquals('4', (char) (0xFF & dest[6]));
-        assertEquals('5', (char) (0xFF & dest[7]));
-        assertEquals('6', (char) (0xFF & dest[8]));
-        assertEquals('7', (char) (0xFF & dest[9]));
-        assertEquals('8', (char) (0xFF & dest[10]));
-        assertEquals('9', (char) (0xFF & dest[11]));
-
-
-        writer.writeKey("01234567890123456789".getBytes(StandardCharsets.UTF_8));
-        assertEquals(34, writer.offset);
-        assertEquals(PdeFieldTypes.KEY_1_LENGTH_BYTES, 0xFF & dest[12]);
-        assertEquals(20, (0xFF & dest[13]));  // the length byte
-        assertEquals('0', (char) (0xFF & dest[14]));
-        assertEquals('1', (char) (0xFF & dest[15]));
-        assertEquals('2', (char) (0xFF & dest[16]));
-        assertEquals('3', (char) (0xFF & dest[17]));
-        assertEquals('4', (char) (0xFF & dest[18]));
-        assertEquals('5', (char) (0xFF & dest[19]));
-        assertEquals('6', (char) (0xFF & dest[20]));
-        assertEquals('7', (char) (0xFF & dest[21]));
-        assertEquals('8', (char) (0xFF & dest[22]));
-        assertEquals('9', (char) (0xFF & dest[23]));
-        assertEquals('0', (char) (0xFF & dest[24]));
-        assertEquals('1', (char) (0xFF & dest[25]));
-        assertEquals('2', (char) (0xFF & dest[26]));
-        assertEquals('3', (char) (0xFF & dest[27]));
-        assertEquals('4', (char) (0xFF & dest[28]));
-        assertEquals('5', (char) (0xFF & dest[29]));
-        assertEquals('6', (char) (0xFF & dest[30]));
-        assertEquals('7', (char) (0xFF & dest[31]));
-        assertEquals('8', (char) (0xFF & dest[32]));
-        assertEquals('9', (char) (0xFF & dest[33]));
-
-    }
 
     /*
         Missing tests:
