@@ -289,6 +289,36 @@ public class PdeWriterTest {
     }
 
     @Test
+    public void testWriteAscii() {
+        byte[] dest = new byte[65 * 1024];
+
+        PdeWriter writer = new PdeWriter(dest);
+
+        writer.writeAscii(null);
+        assertEquals(1, writer.offset);
+        assertEquals(PdeFieldTypes.ASCII_NULL, dest[0]);
+
+        String sourceString1 = "abcde";
+        writer.writeAscii(sourceString1.getBytes(StandardCharsets.UTF_8));
+        assertEquals(7, writer.offset);
+        assertEquals(PdeFieldTypes.ASCII_5_BYTES, dest[1]);
+        assertEquals('a', dest[2]);
+        assertEquals('b', dest[3]);
+        assertEquals('c', dest[4]);
+        assertEquals('d', dest[5]);
+        assertEquals('e', dest[6]);
+
+        String sourceString2   = "abcdefghijklmnopqrstuvxyz" ;
+        byte[] sourceUtf8Bytes = sourceString2.getBytes(StandardCharsets.UTF_8);
+        writer.writeAscii(sourceUtf8Bytes);
+        assertEquals(PdeFieldTypes.ASCII_1_LENGTH_BYTES, dest[7]);
+        assertEquals(sourceUtf8Bytes.length, dest[8]);
+        for(int i=0; i<sourceUtf8Bytes.length; i++) {
+            assertEquals(sourceUtf8Bytes[i], dest[9 + i]);
+        }
+    }
+
+    @Test
     public void testWriteUtf8() {
         byte[] dest = new byte[65 * 1024];
 
@@ -540,7 +570,6 @@ public class PdeWriterTest {
         Missing tests:
 
         Write ASCII
-        Write Copy
         Write Metadata
         Write Extended Field
      */

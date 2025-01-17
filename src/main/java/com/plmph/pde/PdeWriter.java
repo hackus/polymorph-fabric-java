@@ -151,6 +151,38 @@ public class PdeWriter {
         this.offset += length;
     }
 
+    public void writeAscii(byte[] bytes) {
+        if(bytes == null) {
+            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.ASCII_NULL));
+            return;
+        }
+        writeAscii(bytes, 0, bytes.length);
+
+    }
+
+    public void writeAscii(byte[] bytes, int offset, int length) {
+        /*
+        if(bytes == null) {
+            dest[this.offset++] = (byte) (0xFF & (PdeFieldTypes.ASCII_NULL));
+            return;
+        }
+        */
+
+        if(length < 16){
+            dest[this.offset++] = (byte) (0xFF & (PdeFieldTypes.ASCII_0_BYTES + length));
+        } else {
+            int lengthLength = PdeUtil.byteLengthOfInt64Value(length);
+            dest[this.offset++] = (byte) (0xFF & (PdeFieldTypes.ASCII_15_BYTES + lengthLength));
+            for(int i=0, n=lengthLength*8; i < n; i+=8){
+                dest[this.offset++] = (byte) (0xFF & (length >> i));
+            }
+        }
+
+        System.arraycopy(bytes, offset, dest, this.offset, length);
+
+        this.offset += length;
+    }
+
     public void writeUtf8(byte[] bytes) {
         if(bytes == null) {
             dest[offset++] = (byte) (0xFF & (PdeFieldTypes.UTF_8_NULL));
