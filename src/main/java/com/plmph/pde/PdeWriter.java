@@ -159,8 +159,6 @@ public class PdeWriter {
         writeUtf8(bytes, 0, bytes.length);
 
         /*
-
-
         int length = bytes.length;
 
         if(length < 16){
@@ -216,6 +214,25 @@ public class PdeWriter {
         this.dest[this.offset++] = (byte) (0xFF & millisecond);  // lower byte of millisecond
         this.dest[this.offset++] = (byte) (0xFF & (millisecond >> 8) );    // higher byte of millisecond
     }
+
+    public void writeCopy(int copyOffset){
+        int length = PdeUtil.byteLengthOfInt32Value(copyOffset);
+        dest[offset++] = (byte) (0xFF & ((PdeFieldTypes.COPY_1_BYTES - 1) + length));
+
+        for(int i=0, n=length*8; i < n; i+=8){
+            dest[offset++] = (byte) (0xFF & (copyOffset >> i));
+        }
+    }
+
+    public void writeCopy(long copyOffset){
+        int length = PdeUtil.byteLengthOfInt64Value(copyOffset);
+        dest[offset++] = (byte) (0xFF & ((PdeFieldTypes.COPY_1_BYTES - 1) + length));
+
+        for(int i=0, n=length*8; i < n; i+=8){
+            dest[offset++] = (byte) (0xFF & (copyOffset >> i));
+        }
+    }
+
 
     public void writeReference(int referenceOffset){
         int length = PdeUtil.byteLengthOfInt32Value(referenceOffset);

@@ -342,6 +342,26 @@ public class PdeWriterTest {
 
 
     @Test
+    public void testWriteCopy() {
+        PdeWriter writer = new PdeWriter(new byte[1024]);
+
+        // Even though this copyOffset is positive (123) - it is to be interpreted as a negative offset back in
+        // in the byte stream to a PDE field found at the location of the beginning of the Copy field minus the
+        // copyOffset. In this case, the offset actually references outside of the byte buffer - so it would not
+        // make much sense in reality - but for the sake of this unit test, a backwards relative offset of 123 works.
+        writer.writeCopy(123);
+        assertEquals(2, writer.offset);
+        assertEquals(PdeFieldTypes.COPY_1_BYTES, writer.dest[0]);
+        assertEquals(123, writer.dest[1]);
+
+        writer.writeCopy(65534L);
+        assertEquals(5, writer.offset);
+        assertEquals(PdeFieldTypes.COPY_2_BYTES, writer.dest[2]);
+        assertEquals(0xfe, 0xff & writer.dest[3]);
+        assertEquals(0xff, 0xff & writer.dest[4]);
+    }
+
+    @Test
     public void testWriteReference() {
         PdeWriter writer = new PdeWriter(new byte[1024]);
 
@@ -354,7 +374,7 @@ public class PdeWriterTest {
         assertEquals(PdeFieldTypes.REFERENCE_1_BYTES, writer.dest[0]);
         assertEquals(123, writer.dest[1]);
 
-        writer.writeReference(65534);
+        writer.writeReference(65534L);
         assertEquals(5, writer.offset);
         assertEquals(PdeFieldTypes.REFERENCE_2_BYTES, writer.dest[2]);
         assertEquals(0xfe, 0xff & writer.dest[3]);
@@ -521,11 +541,8 @@ public class PdeWriterTest {
 
         Write ASCII
         Write Copy
-        Write Reference
         Write Metadata
         Write Extended Field
-
-
      */
 
 }
