@@ -563,15 +563,56 @@ public class PdeWriterTest {
     }
 
 
+    @Test
+    public void testWriteMetadata() {
+        byte[] dest = new byte[65 * 1024];
+
+        PdeWriter writer = new PdeWriter(dest);
+        writer.setCompositeFieldStack(new int[16]);
+
+        assertEquals(-1, writer.compositeFieldStackIndex);
+        writer.writeMetadataBeginPush(3);
+        assertEquals(0, writer.compositeFieldStackIndex);
+        writer.writeMetadataEndPop();
+        assertEquals(-1, writer.compositeFieldStackIndex);
+
+        assertEquals(PdeFieldTypes.METADATA_3_LENGTH_BYTES, 0xFF & dest[0]);
+        assertEquals(0, 0xFF & dest[1]);
+        assertEquals(0, 0xFF & dest[2]);
+        assertEquals(0, 0xFF & dest[3]);
+
+        byte[] bytes = "12345".getBytes(StandardCharsets.UTF_8);
+
+        writer.writeMetadataBeginPush(4);
+        writer.writeBytes(bytes);
+        writer.writeMetadataEndPop();
+
+        assertEquals(PdeFieldTypes.METADATA_4_LENGTH_BYTES, 0xFF & dest[4]);
+        assertEquals(6, 0xFF & dest[5]);
+        assertEquals(0, 0xFF & dest[6]);
+        assertEquals(0, 0xFF & dest[7]);
+        assertEquals(0, 0xFF & dest[8]);    // 1 field type byte for PdeFieldTypes.BYTES_5_BYTES + 5 value bytes
+        assertEquals(PdeFieldTypes.BYTES_5_BYTES, (0xFF & dest[9]));
+        assertEquals('1', (char) (0xFF & dest[10]));
+        assertEquals('2', (char) (0xFF & dest[11]));
+        assertEquals('3', (char) (0xFF & dest[12]));
+        assertEquals('4', (char) (0xFF & dest[13]));
+        assertEquals('5', (char) (0xFF & dest[14]));
+    }
+
 
 
 
     /*
-        Missing tests:
+        Added tests - that should be in PdeReader too:
+            Write Reference
+            Write Copy
+            Write ASCII
+            Write Metadata
 
-        Write ASCII
-        Write Metadata
-        Write Extended Field
+        Missing tests:
+            Write Extended Field
+
      */
 
 }

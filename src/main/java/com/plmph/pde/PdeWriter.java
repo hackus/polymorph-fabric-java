@@ -362,5 +362,26 @@ public class PdeWriter {
     }
 
 
+    public void writeMetadataBeginPush(int lengthLength){
+        this.compositeFieldStack[++this.compositeFieldStackIndex] = this.offset;
+        this.dest[this.offset++] = (byte) (0xFF & ((PdeFieldTypes.METADATA_NULL + lengthLength)));
+        this.offset += lengthLength;
+    }
+
+    public void writeMetadataEndPop(){
+        int objectStartIndex = this.compositeFieldStack[this.compositeFieldStackIndex--];
+        int lengthLength = ((int) (0xFF & this.dest[objectStartIndex])) - ((int) (0xFF & PdeFieldTypes.METADATA_NULL));
+        int length = this.offset - objectStartIndex - FIELD_TYPE_BYTE_COUNT - lengthLength;
+
+        objectStartIndex++; //jump over lead byte of object field.
+
+        //Encode length bytes using little endian instead of big endian.
+        for(int i=0, n=lengthLength*8; i < n; i+=8){
+            dest[objectStartIndex++] = (byte) (0xFF & (length >> i));
+        }
+    }
+
+
+
 
 }
