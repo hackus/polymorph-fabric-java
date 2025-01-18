@@ -1,5 +1,6 @@
 package com.plmph.pde;
 
+import com.plmph.hex.HexUtil;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -598,6 +599,8 @@ public class PdeWriterTest {
         assertEquals('3', (char) (0xFF & dest[12]));
         assertEquals('4', (char) (0xFF & dest[13]));
         assertEquals('5', (char) (0xFF & dest[14]));
+
+        System.out.println(HexUtil.convert(new StringBuffer(), writer.dest, 0, writer.offset));
     }
 
 
