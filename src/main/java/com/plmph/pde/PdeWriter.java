@@ -92,6 +92,8 @@ public class PdeWriter {
         }
     }
 
+
+    //todo add functionality for negative ints
     public void writeInt(int value) {
         int length = PdeUtil.byteLengthOfInt32Value(value);
         dest[offset++] = (byte) (0xFF & (PdeFieldTypes.INT_NULL + length));
@@ -101,6 +103,7 @@ public class PdeWriter {
         }
     }
 
+    //todo add functionality for negative ints
     public void writeInt(long value) {
         int length = PdeUtil.byteLengthOfInt64Value(value);
         dest[offset++] = (byte) (0xFF & (PdeFieldTypes.INT_NULL + length));

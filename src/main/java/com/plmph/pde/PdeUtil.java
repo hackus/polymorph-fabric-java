@@ -10,6 +10,20 @@ public class PdeUtil {
     public static final long TWO_POW_48 = TWO_POW_8 * TWO_POW_40;
     public static final long TWO_POW_56 = TWO_POW_8 * TWO_POW_48;
 
+
+
+    public static int byteCountForLength(long length){
+        if(length == 0)         return 0;
+        if(length < TWO_POW_8)  return 1;
+        if(length < TWO_POW_16) return 2;
+        if(length < TWO_POW_24) return 3;
+        if(length < TWO_POW_32) return 4;
+        if(length < TWO_POW_40) return 5;
+        if(length < TWO_POW_48) return 6;
+        if(length < TWO_POW_56) return 7;
+        return 8;
+    }
+
     public static int byteLengthOfInt64Value(long value){
         if(value < TWO_POW_8)  return 1;
         if(value < TWO_POW_16) return 2;
