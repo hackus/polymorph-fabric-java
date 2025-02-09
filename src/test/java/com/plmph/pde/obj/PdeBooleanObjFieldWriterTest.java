@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PdeBooleanObjectFieldWriterTest {
+public class PdeBooleanObjFieldWriterTest {
 
 
     @Test

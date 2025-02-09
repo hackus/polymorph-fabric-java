@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PdeIntegerObjectFieldWriterTest {
+public class PdeIntObjFieldWriterTest {
 
 
     @Test
@@ -15,7 +15,7 @@ public class PdeIntegerObjectFieldWriterTest {
         byte[] dest = new byte[1024];
 
         Field integerFieldWithLongName = Pojo1.class.getField("integerFieldWithLongName");
-        PdeIntegerObjFieldWriter fieldWriter = new PdeIntegerObjFieldWriter(integerFieldWithLongName);
+        PdeIntObjFieldWriter fieldWriter = new PdeIntObjFieldWriter(integerFieldWithLongName);
 
         Pojo1 pojo = new Pojo1();
         int bytesWritten = fieldWriter.writeKeyAndValue(dest, 0, pojo);
@@ -61,7 +61,7 @@ public class PdeIntegerObjectFieldWriterTest {
     public void testNegativeInteger()  throws NoSuchFieldException, IllegalAccessException {
         byte[] dest = new byte[1024];
         Field integerFieldWithLongName = Pojo1.class.getField("integerFieldWithLongName");
-        PdeIntegerObjFieldWriter fieldWriter = new PdeIntegerObjFieldWriter(integerFieldWithLongName);
+        PdeIntObjFieldWriter fieldWriter = new PdeIntObjFieldWriter(integerFieldWithLongName);
 
         Pojo1 pojo = new Pojo1();
         pojo.integerFieldWithLongName = -189;

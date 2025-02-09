@@ -6,12 +6,12 @@ import com.plmph.pde.PdeUtil;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
-public class PdeIntegerObjFieldWriter implements PdeObjectFieldWriter{
+public class PdeFloatObjFieldWriter implements PdeObjectFieldWriter{
 
     private Field  field    = null;
     private byte[] keyBytes = null;
 
-    public PdeIntegerObjFieldWriter(Field field) {
+    public PdeFloatObjFieldWriter(Field field) {
         this.field    = field;
         this.keyBytes = field.getName().getBytes(StandardCharsets.UTF_8);
     }
@@ -24,30 +24,23 @@ public class PdeIntegerObjFieldWriter implements PdeObjectFieldWriter{
 
     @Override
     public int writeValue(byte[] dest, int offset, Object srcObj) throws IllegalAccessException {
-        Integer value = (Integer) this.field.get(srcObj);
+        Float value = (Float) this.field.get(srcObj);
         int length = 0;
 
         if(value == null) {
-            dest[offset] = PdeFieldTypes.INT_NULL;
+            dest[offset] = PdeFieldTypes.FLOAT_NULL;
         } else {
-            int intValue = value.intValue();
-            if(intValue >= 0) {
-                length = PdeUtil.byteLengthOfInt32Value(intValue);
-                dest[offset++] = (byte) (0xFF & (PdeFieldTypes.INT_NULL + length));
-                for(int i=0, n=length*8; i < n; i+=8){
-                    dest[offset++] = (byte) (0xFF & (intValue >> i));
-                }
-            } else {
-                intValue = -(intValue +1);
-                length = PdeUtil.byteLengthOfInt32Value(intValue);
-                dest[offset++] = (byte) (0xFF & (PdeFieldTypes.INT_POS_8_BYTES + length));
-                for(int i=0, n=length*8; i < n; i+=8){
-                    dest[offset++] = (byte) (0xFF & (intValue >> i));
-                }
+            float floatValue = value.floatValue();
+
+            int intBits = Float.floatToIntBits(floatValue);
+            dest[offset++] = (byte) (0xFF & (PdeFieldTypes.FLOAT_4_BYTES));
+
+            for(int i=0, n=4*8; i < n; i+=8){
+                dest[offset++] = (byte) (0xFF & (intBits >> i));
             }
         }
 
-        return 1 + length;
+        return 5;
     }
 
     @Override
