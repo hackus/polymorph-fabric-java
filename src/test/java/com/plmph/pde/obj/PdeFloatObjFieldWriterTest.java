@@ -51,24 +51,4 @@ public class PdeFloatObjFieldWriterTest {
     }
 
 
-    @Test
-    public void testNegativeInteger()  throws NoSuchFieldException, IllegalAccessException {
-        byte[] dest = new byte[1024];
-        Field integerFieldWithLongName = Pojo1.class.getField("integerFieldWithLongName");
-        PdeIntObjFieldWriter fieldWriter = new PdeIntObjFieldWriter(integerFieldWithLongName);
-
-        Pojo1 pojo = new Pojo1();
-        pojo.integerFieldWithLongName = -189;
-        int bytesWritten = fieldWriter.writeKeyAndValue(dest, 0, pojo);
-
-        System.out.println(bytesWritten);
-
-        assertEquals(28, bytesWritten);
-
-        int offset = 26;
-
-        assertEquals(PdeFieldTypes.INT_NEG_1_BYTES, 0xFF & dest[offset++]);
-        assertEquals(188, 0xFF & dest[offset++]);
-
-    }
 }
