@@ -28,7 +28,11 @@ You can see an example of how to read raw, binary PDE in the PdeReaderTest, here
 
 
 ## Contributions
-If you want to contribute to the Polymorph project - great! There are multiple ways to contribute. 
+If you want to contribute to the Polymorph project - great! There are multiple ways to contribute:
+
+ - Usage + feedback
+ - Spread awareness
+ - Standards and code contributions
 
 The best way to contribute is to use the Polymorph technologies and provide feedback and suggestions.
 
@@ -45,4 +49,4 @@ there are some restrictions on contributions. These restrictions are:
 4) Once an issue is opened - agreement has to be reached about who submits a commit for that issue. If you have not reached agreement that you will be providing that commit - a commit from you will get rejected. 
 5) A commit (PR) can only address one issue. Do not mix multiple issues into the same commit. You will be asked to split them. 
 
-
+So far, there is no way to contribute financially. Maybe sometime in the future that will be possible.
