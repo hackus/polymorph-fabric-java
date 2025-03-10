@@ -47,6 +47,7 @@ there are some restrictions on contributions. These restrictions are:
 2) Coordinate with the project first, then make suggestions, and if accepted - an issue will be opened.
 3) A suggestion should be aligned with the overall vision and goals for the project. Feature suggestions must be broadly beneficial - not just beneficial to you. 
 4) Once an issue is opened - agreement has to be reached about who submits a commit for that issue. If you have not reached agreement that you will be providing that commit - a commit from you will get rejected. 
-5) A commit (PR) can only address one issue. Do not mix multiple issues into the same commit. You will be asked to split them. 
+5) A commit (PR) can only address one issue. Do not mix multiple issues into the same commit. You will be asked to split them.
+6) Do NOT change the formatting of any files. Do NOT use your IDE's default formatting. Follow the formatting conventions of the project.
 
 So far, there is no way to contribute financially. Maybe sometime in the future that will be possible.
