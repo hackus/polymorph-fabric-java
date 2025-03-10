@@ -32,7 +32,7 @@ If you want to contribute to the Polymorph project - great! There are multiple w
 
  - Usage + feedback
  - Spread awareness
- - Standards and code contributions
+ - Contributions to standards and code
 
 The best way to contribute is to use the Polymorph technologies and provide feedback and suggestions.
 
