@@ -14,10 +14,10 @@ public class PdeObjectWriterImpl<T> implements PdeObjectWriter<T> {
 
     public PdeObjectWriterImpl(Class<T> targetClass) {
         this.targetClass = targetClass;
-        addFields();
+        //addFields();
     }
 
-    private void addFields() {
+    public PdeObjectWriterImpl addAllFields() {
         List<Field> allFields = Arrays.asList(targetClass.getDeclaredFields());
 
         allFields.forEach(field -> {
@@ -27,28 +27,29 @@ public class PdeObjectWriterImpl<T> implements PdeObjectWriter<T> {
                 throw new RuntimeException(e);
             }
         });
+
+        return this;
     }
 
-    private void addFieldWriter(String fieldName) throws NoSuchFieldException {
+    public PdeObjectWriterImpl addFieldWriters(String ... fieldNames) throws NoSuchFieldException {
+        for(int i=0; i<fieldNames.length; i++){
+            addFieldWriter(fieldNames[i]);
+        }
+        return this;
+    }
+
+    public PdeObjectWriterImpl addFieldWriter(String fieldName) throws NoSuchFieldException {
         Field field = this.targetClass.getField(fieldName);
+        addFieldWriter(field);
+        return this;
+    }
 
+    protected void addFieldWriter(Field field){
         Class fieldType = field.getType();
-        if (fieldType.equals(Boolean.class)) {
-            this.fieldWriters.add(new PdeBooleanObjFieldWriter(field));
-            return;
-        }
-        if (fieldType.equals(Integer.class)) {
-            this.fieldWriters.add(new PdeIntObjFieldWriter(field));
-            return;
-        }
-        if (fieldType.equals(Float.class)) {
-            this.fieldWriters.add(new PdeFloatObjFieldWriter(field));
-            return;
-        }
-        if (fieldType.equals(String.class)) {
-            this.fieldWriters.add(new PdeUtf8ObjFieldWriter(field));
-        }
-
+        if (fieldType.equals(Boolean.class)) { this.fieldWriters.add(new PdeBooleanObjFieldWriter(field)); return; }
+        if (fieldType.equals(Integer.class)) { this.fieldWriters.add(new PdeIntObjFieldWriter(field));     return; }
+        if (fieldType.equals(Float.class))   { this.fieldWriters.add(new PdeFloatObjFieldWriter(field));   return; }
+        if (fieldType.equals(String.class))  { this.fieldWriters.add(new PdeUtf8ObjFieldWriter(field));    return; }
     }
 
     public int writeKeysAndValues(byte[] dest, int offset, T object, int lengthByteCount) throws IllegalAccessException {
@@ -63,7 +64,7 @@ public class PdeObjectWriterImpl<T> implements PdeObjectWriter<T> {
 
         int bodyLength = offset - lengthByteOffset - lengthByteCount;
         for (int i = 0, n = lengthByteCount * 8; i < n; i += 8) {
-            dest[offset++] = (byte) (0xFF & (bodyLength >> i));
+            dest[lengthByteOffset++] = (byte) (0xFF & (bodyLength >> i));
         }
 
         return 1 + lengthByteCount + bodyLength;
