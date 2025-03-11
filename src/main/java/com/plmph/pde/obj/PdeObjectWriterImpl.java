@@ -17,15 +17,11 @@ public class PdeObjectWriterImpl<T> implements PdeObjectWriter<T> {
         //addFields();
     }
 
-    public PdeObjectWriterImpl addAllFields() {
+    public PdeObjectWriterImpl addFieldWritersForAllFields() {
         List<Field> allFields = Arrays.asList(targetClass.getDeclaredFields());
 
         allFields.forEach(field -> {
-            try {
-                addFieldWriter(field.getName());
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            }
+            addFieldWriter(field);
         });
 
         return this;
